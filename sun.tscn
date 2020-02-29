@@ -1,0 +1,66 @@
+[gd_scene load_steps=6 format=2]
+
+[sub_resource type="Curve" id=1]
+_data = [ Vector2( 0, 0.819 ), 0.0, 0.0, 0, 0, Vector2( 0.208717, 0.9598 ), 0.0, 0.0, 0, 0, Vector2( 0.773806, 0.654 ), -0.986488, -0.986488, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=2]
+curve = SubResource( 1 )
+
+[sub_resource type="ParticlesMaterial" id=3]
+emission_shape = 1
+emission_sphere_radius = 1.0
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 0.1
+initial_velocity_random = 0.5
+scale_curve = SubResource( 2 )
+color = Color( 1, 0.0470588, 0.0470588, 1 )
+
+[sub_resource type="SpatialMaterial" id=4]
+flags_do_not_receive_shadows = true
+vertex_color_use_as_albedo = true
+params_diffuse_mode = 4
+params_specular_mode = 3
+params_blend_mode = 1
+emission_enabled = true
+emission = Color( 1, 0.329412, 0, 1 )
+emission_energy = 0.5
+emission_operator = 0
+emission_on_uv2 = false
+
+[sub_resource type="SphereMesh" id=5]
+material = SubResource( 4 )
+radius = 0.05
+height = 0.095
+radial_segments = 4
+rings = 3
+
+[node name="sun" type="Spatial"]
+
+[node name="Particles" type="Particles" parent="."]
+transform = Transform( 0.55, 0, 0, 0, 0.55, 0, 0, 0, 0.55, 0, 0, 0 )
+use_in_baked_light = true
+amount = 2000
+lifetime = 0.75
+speed_scale = 2.5
+process_material = SubResource( 3 )
+draw_pass_1 = SubResource( 5 )
+
+[node name="Particles2" type="Particles" parent="."]
+transform = Transform( -2.40413e-08, -0.55, 0, 0.55, -2.40413e-08, 0, 0, 0, 0.55, 0, 0, 0 )
+use_in_baked_light = true
+amount = 2000
+speed_scale = 2.5
+process_material = SubResource( 3 )
+draw_pass_1 = SubResource( 5 )
+
+[node name="Particles3" type="Particles" parent="."]
+transform = Transform( -2.40413e-08, -0.55, 0, -2.40413e-08, 1.05088e-15, -0.55, 0.55, -2.40413e-08, -2.40413e-08, 0, 0, 0 )
+use_in_baked_light = true
+amount = 2000
+speed_scale = 2.5
+process_material = SubResource( 3 )
+draw_pass_1 = SubResource( 5 )
+
+[node name="OmniLight" type="OmniLight" parent="."]
+light_color = Color( 0.74902, 0.403922, 0.129412, 1 )

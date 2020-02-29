@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/wood_plank.obj-de694c3c19e686a84d6bbfe9aaa9f77f.mesh"
+
+[deps]
+
+files=[ "res://.import/wood_plank.obj-de694c3c19e686a84d6bbfe9aaa9f77f.mesh" ]
+
+source_file="res://objfiles/wood_plank.obj"
+dest_files=[ "res://.import/wood_plank.obj-de694c3c19e686a84d6bbfe9aaa9f77f.mesh", "res://.import/wood_plank.obj-de694c3c19e686a84d6bbfe9aaa9f77f.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

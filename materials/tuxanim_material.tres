@@ -1,0 +1,17 @@
+[gd_resource type="SpatialMaterial" load_steps=3 format=2]
+
+[ext_resource path="res://textures/tuxcolor.png" type="Texture" id=1]
+
+[sub_resource type="SpatialMaterial" id=1]
+flags_unshaded = true
+flags_no_depth_test = true
+albedo_color = Color( 0.886719, 0.640989, 0.0727386, 1 )
+
+[resource]
+render_priority = 1
+next_pass = SubResource( 1 )
+flags_transparent = true
+params_depth_draw_mode = 3
+albedo_texture = ExtResource( 1 )
+metallic_specular = 0.44
+roughness = 0.35

@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/penguin_walk.wav-b87f86a42a4b4bdbbc66193c5adb837c.sample"
+
+[deps]
+
+source_file="res://sounds/penguin_walk.wav"
+dest_files=[ "res://.import/penguin_walk.wav-b87f86a42a4b4bdbbc66193c5adb837c.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=true
+edit/loop=false
+compress/mode=0

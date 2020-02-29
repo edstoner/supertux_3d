@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/planetgrass.obj-99083ce106f48efb1e1f05027443418b.mesh"
+
+[deps]
+
+files=[ "res://.import/planetgrass.obj-99083ce106f48efb1e1f05027443418b.mesh" ]
+
+source_file="res://objfiles/planetgrass.obj"
+dest_files=[ "res://.import/planetgrass.obj-99083ce106f48efb1e1f05027443418b.mesh", "res://.import/planetgrass.obj-99083ce106f48efb1e1f05027443418b.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

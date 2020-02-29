@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/small_moon.obj-05d83329d858578ed31deb0f4236f1e6.mesh"
+
+[deps]
+
+files=[ "res://.import/small_moon.obj-05d83329d858578ed31deb0f4236f1e6.mesh" ]
+
+source_file="res://objfiles/small_moon.obj"
+dest_files=[ "res://.import/small_moon.obj-05d83329d858578ed31deb0f4236f1e6.mesh", "res://.import/small_moon.obj-05d83329d858578ed31deb0f4236f1e6.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

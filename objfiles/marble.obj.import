@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/marble.obj-373e9b8d2a5c1c5378f09888363f469c.mesh"
+
+[deps]
+
+files=[ "res://.import/marble.obj-373e9b8d2a5c1c5378f09888363f469c.mesh" ]
+
+source_file="res://objfiles/marble.obj"
+dest_files=[ "res://.import/marble.obj-373e9b8d2a5c1c5378f09888363f469c.mesh", "res://.import/marble.obj-373e9b8d2a5c1c5378f09888363f469c.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

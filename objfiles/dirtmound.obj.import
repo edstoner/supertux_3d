@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/dirtmound.obj-17548e6d32fdbf8ba2af6c162a176533.mesh"
+
+[deps]
+
+files=[ "res://.import/dirtmound.obj-17548e6d32fdbf8ba2af6c162a176533.mesh" ]
+
+source_file="res://objfiles/dirtmound.obj"
+dest_files=[ "res://.import/dirtmound.obj-17548e6d32fdbf8ba2af6c162a176533.mesh", "res://.import/dirtmound.obj-17548e6d32fdbf8ba2af6c162a176533.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

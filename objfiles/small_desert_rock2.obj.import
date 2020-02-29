@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/small_desert_rock2.obj-3d65a46cf1ba6881722f5cacf6549e2f.mesh"
+
+[deps]
+
+files=[ "res://.import/small_desert_rock2.obj-3d65a46cf1ba6881722f5cacf6549e2f.mesh" ]
+
+source_file="res://objfiles/small_desert_rock2.obj"
+dest_files=[ "res://.import/small_desert_rock2.obj-3d65a46cf1ba6881722f5cacf6549e2f.mesh", "res://.import/small_desert_rock2.obj-3d65a46cf1ba6881722f5cacf6549e2f.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

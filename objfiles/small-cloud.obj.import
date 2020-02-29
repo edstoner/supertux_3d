@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/small-cloud.obj-483e21e785bb37b580fc154a4ec93c6e.mesh"
+
+[deps]
+
+files=[ "res://.import/small-cloud.obj-483e21e785bb37b580fc154a4ec93c6e.mesh" ]
+
+source_file="res://objfiles/small-cloud.obj"
+dest_files=[ "res://.import/small-cloud.obj-483e21e785bb37b580fc154a4ec93c6e.mesh", "res://.import/small-cloud.obj-483e21e785bb37b580fc154a4ec93c6e.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

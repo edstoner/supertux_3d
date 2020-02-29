@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/earthv3.obj-01f3a2c8683cf762772cc5ae89eae732.mesh"
+
+[deps]
+
+files=[ "res://.import/earthv3.obj-01f3a2c8683cf762772cc5ae89eae732.mesh" ]
+
+source_file="res://objfiles/earthv3.obj"
+dest_files=[ "res://.import/earthv3.obj-01f3a2c8683cf762772cc5ae89eae732.mesh", "res://.import/earthv3.obj-01f3a2c8683cf762772cc5ae89eae732.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true
