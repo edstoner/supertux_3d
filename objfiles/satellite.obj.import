@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/satellite.obj-904e007d03cf2830cbebf00fed3d9e09.mesh"
+
+[deps]
+
+files=[ "res://.import/satellite.obj-904e007d03cf2830cbebf00fed3d9e09.mesh" ]
+
+source_file="res://objfiles/satellite.obj"
+dest_files=[ "res://.import/satellite.obj-904e007d03cf2830cbebf00fed3d9e09.mesh", "res://.import/satellite.obj-904e007d03cf2830cbebf00fed3d9e09.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

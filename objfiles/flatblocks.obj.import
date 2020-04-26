@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/flatblocks.obj-9db52b9e1f96a902ba480a47aec70f34.mesh"
+
+[deps]
+
+files=[ "res://.import/flatblocks.obj-9db52b9e1f96a902ba480a47aec70f34.mesh" ]
+
+source_file="res://objfiles/flatblocks.obj"
+dest_files=[ "res://.import/flatblocks.obj-9db52b9e1f96a902ba480a47aec70f34.mesh", "res://.import/flatblocks.obj-9db52b9e1f96a902ba480a47aec70f34.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

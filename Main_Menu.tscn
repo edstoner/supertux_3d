@@ -1,0 +1,90 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://fonts/gamefont_26.tres" type="DynamicFont" id=1]
+[ext_resource path="res://textures/tuxhead.png" type="Texture" id=2]
+[ext_resource path="res://Main_Menu.gd" type="Script" id=3]
+
+[node name="Main_Menu" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Start_Menu" type="Panel" parent="."]
+margin_right = 330.0
+margin_bottom = 720.0
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Start_Menu"]
+margin_left = 70.0
+margin_top = 20.0
+margin_right = 40.0
+margin_bottom = 14.0
+custom_fonts/font = ExtResource( 1 )
+text = "SuperTux 3D"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button_Start" type="Button" parent="Start_Menu"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -155.0
+margin_top = -320.0
+margin_right = 155.0
+margin_bottom = -270.0
+focus_neighbour_top = NodePath("../Button_Controls")
+focus_neighbour_bottom = NodePath("../Button_Load")
+custom_fonts/font = ExtResource( 1 )
+text = "New Game"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button_Load" type="Button" parent="Start_Menu"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -155.0
+margin_top = -255.0
+margin_right = 155.0
+margin_bottom = -205.0
+focus_neighbour_top = NodePath("../Button_Start")
+focus_neighbour_bottom = NodePath("../Button_Controls")
+custom_fonts/font = ExtResource( 1 )
+text = "Load Game"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button_Controls" type="Button" parent="Start_Menu"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -155.0
+margin_top = -190.0
+margin_right = 155.0
+margin_bottom = -140.0
+focus_neighbour_top = NodePath("../Button_Load")
+focus_neighbour_bottom = NodePath("../Button_Start")
+custom_fonts/font = ExtResource( 1 )
+text = "Controls"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect" type="TextureRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 380.0
+margin_top = 120.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource( 2 )

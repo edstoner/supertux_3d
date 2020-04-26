@@ -16,13 +16,14 @@
 extends KinematicBody
 
 var tics = 0
-var gametime = 0
+var lgametime = 0
+#var marblecount
 var speed = 5.0
 var jumpspeed = 5.0
 var jumping = 0
 var longjump = false
 var sideflip = false
-var slam = false
+var slam = 0
 var slamground = 0
 var jumpforce = 0
 var jumpvec = Vector3(0,0,0)
@@ -45,13 +46,17 @@ var bubblepart
 var wakepart
 var wallslidepart
 var smokepart
+var sparkpart
 var moveopposite = 0
 var inwater = false
 var runcol
 var slidecol
-var marblecount = 0
+var spincol
 var mclabel
 var gametimelabel
+var globals
+var godotbotpieces_scene = preload("res://godotbot-pieces.tscn")
+var removenodes = {}
 
 func _ready():
 	set_physics_process(true)
@@ -59,17 +64,12 @@ func _ready():
 	set_notify_transform(true)
 	# attach to closet ground
 
-	var scene_root = get_tree().root.get_children()[0]
-	aplayer = scene_root.get_node("tux/tuxanim/AnimationPlayer")
+	aplayer = get_node("tuxanim/AnimationPlayer")
 	
-	#planet = scene_root.get_node("planet/planet-mesh/planet-staticbody")
-	#planets.append(planet)
-	#planets.append(scene_root.get_node("moon/moon-mesh/moon-staticbody"))
+	globals = get_node("/root/Globals")
 
 	planets = get_tree().get_nodes_in_group('gravitybodies')
 	lava = get_tree().get_nodes_in_group('lava')
-	for pl in planets:
-		print('PLANET:%s' % [pl.name])
 
 	# ATTACH to curentplanet
 	# NOTE: planet needs to be underneath tux in scene
@@ -90,12 +90,13 @@ func _ready():
 		orthonormalize()
 	else:
 		print('ERROR-ERROR-ERROR')
-	runpart = scene_root.get_node("tux/emitpoint/runparticles")
-	jumppart = scene_root.get_node("tux/emitpoint/jumpparticles")
-	bubblepart = scene_root.get_node("tux/emitpoint/bubbleparticles")
-	wakepart = scene_root.get_node("tux/emitpoint/wakeparticles")
-	wallslidepart = scene_root.get_node("tux/emitpoint/wallslideparticles")
-	smokepart = scene_root.get_node("tux/emitpoint/smokeparticles")
+	runpart = get_node("emitpoint/runparticles")
+	jumppart = get_node("emitpoint/jumpparticles")
+	bubblepart = get_node("emitpoint/bubbleparticles")
+	wakepart = get_node("emitpoint/wakeparticles")
+	wallslidepart = get_node("emitpoint/wallslideparticles")
+	smokepart = get_node("emitpoint/smokeparticles")
+	sparkpart = get_node("emitpoint/sparkparticles")
 	
 	# connect water areas
 	var waterareas = get_tree().get_nodes_in_group('waterareas')
@@ -103,18 +104,32 @@ func _ready():
 		waterarea.connect("body_entered",self,"_on_waterarea_body_entered")
 		waterarea.connect("body_exited",self,"_on_waterarea_body_exited")
 	
+	# connect portal areas
+	var portalareas = get_tree().get_nodes_in_group('portals')
+	for portal in portalareas:
+		portal.connect("body_entered",self,"_on_portal_entered",[portal])
+	
 	# connect marble collisions
 	var marbles = get_tree().get_nodes_in_group('marbles')
 	for marblearea in marbles:
-		marblearea.connect("body_entered",self,"_on_marblearea_body_entered",[marblearea])
+		if marblearea.name in globals.marbles:
+			marblearea.queue_free()
+		else:
+			marblearea.connect("body_entered",self,"_on_marblearea_body_entered",[marblearea])
+		
+	# HUD
+	var scene_root = get_tree().root.get_children()[-1]
 	mclabel = scene_root.get_node("HUD/MarbleCount")
+	mclabel.text = str(globals.marblecount)
 	gametimelabel = scene_root.get_node("HUD/GameTime")
 	
 	# collision shapes
-	runcol = scene_root.get_node("tux/runcolshape")
+	runcol = get_node("runcolshape")
 	runcol.disabled = false
-	slidecol = scene_root.get_node("tux/slidecolshape")
+	slidecol = get_node("slidecolshape")
 	slidecol.disabled = true
+	spincol = get_node("spincolshape")
+	spincol.disabled = true
 
 
 func align_up(node_basis, normal):   
@@ -160,7 +175,7 @@ func align_forward(node_basis,fvec):
 	# check if y is flipped and flip them back
 	if node_basis.y.angle_to(result.y) > 3:
 		result.y = result.y * -1
-		print('Y-FLIPPED')
+		#print('Y-FLIPPED')
 	result = result.orthonormalized()
 	result.x *= abs(origscale.x) #
 	result.y *= abs(origscale.y) #
@@ -193,6 +208,7 @@ func getnearest(playernode,plist):
 func aligntoground():
 	# ALIGN TO GROUND
 	var onground = false
+	var grounddist = -1
 	var rayfrom = global_transform.origin
 	var rayto = global_transform.origin+(global_transform.basis.y.normalized()*-7)
 	var space_state = get_world().direct_space_state
@@ -204,33 +220,92 @@ func aligntoground():
 		if pby.dot(planetnormal) == -1:
 			#vectors are 180 degree difference
 			pby += (global_transform.basis.x * .01)
-			pby.normalized()
+			#pby.normalized()
 		var lidir = pby.linear_interpolate(result.normal,0.4).normalized()
 		global_transform.basis = align_up(global_transform.basis,lidir)
 		force_update_transform()
 		orthonormalize()
 		planetnormal = result.normal.normalized()
 		if result.collider != planet:
-			print("%s-Changed Planets RUNNING from %s to %s" % [tics,planet.name,result.collider.name])
-			planet = result.collider
-		# CLAMP TO GROUND
-		if abs(global_transform.origin.distance_to(groundpos)) < 0.6:
-			global_transform.origin = groundpos+(planetnormal*.5)
-			force_update_transform()
-			onground = true
+			if result.collider in planets:
+				#print("%s-Changed Planets RUNNING from %s to %s" % [tics,planet.name,result.collider.name])
+				planet = result.collider
+		else:
+			# CLAMP TO GROUND
+			grounddist = global_transform.origin.distance_to(groundpos)
+			if abs(grounddist) < 0.6:
+				if "nogroundclamp" in planet:
+					pass
+				else:
+					global_transform.origin = groundpos+(planetnormal*.5)
+					force_update_transform()
+				onground = true
 	else:
-		print('ERROR-NOPLANET')
-	return onground
+		#print('ERROR-NOPLANET')
+		pass
+	return [onground,grounddist]
 
-func secstotimestr(gametime):
-	var minutes = int(gametime) / 60
-	var seconds = int(gametime) % 60
+func secstotimestr(gtime):
+# warning-ignore:integer_division
+	var minutes = int(gtime) / 60
+	var seconds = int(gtime) % 60
 	return "%02d:%02d" % [minutes,seconds]
+
+func enterlava():
+	aplayer.play('FireRun')
+	$quacksound.play()
+	jumpforce = 3.4
+	forward = 1.0
+	fulljump = true
+	jumping = lgametime
+	jumpvec = planetnormal 
+	jumpvec = jumpvec.normalized()
+	jumpbasis = Basis(global_transform.basis.x,global_transform.basis.y,global_transform.basis.z)
+	smokepart.emitting = true
+	runpart.emitting = false
+	if $walksound.playing:
+		$walksound.stop()
+	wakepart.emitting = false
+	return
+
+func crash():
+	crashing = true
+	runpart.emitting = false
+	if $walksound.playing:
+		$walksound.stop()
+	wakepart.emitting = false
+	aplayer.play('Crash')
+	if $slidesound.playing:
+		$slidesound.stop()
+	$crashsound.play()
+	forward = 0
+	return
+
+func addrobotpieces(robotnode):
+	var robotpieces = godotbotpieces_scene.instance()
+	var scene_root = get_tree().root.get_children()[-1]
+	scene_root.add_child(robotpieces)
+	for i in robotpieces.get_children():
+		removenodes[i] = lgametime+1.3
+		i.apply_impulse(Vector3(0,0,0),global_transform.basis.y)
+	robotpieces.global_transform.origin = robotnode.global_transform.origin
+
+func procremovenodes():
+	var delkeys = []
+	for rnode in removenodes:
+		if lgametime > removenodes[rnode]:
+			delkeys.append(rnode)
+			rnode.queue_free()
+	for i in delkeys:
+		removenodes.erase(i)
 
 func _physics_process(delta):
 	tics += 1
-	gametime += delta
-	gametimelabel.text = secstotimestr(gametime)
+	globals.gametime += delta
+	lgametime += delta
+	gametimelabel.text = secstotimestr(globals.gametime)
+
+	procremovenodes()
 
 	var rotate = 0
 	var jumppress = false
@@ -249,7 +324,7 @@ func _physics_process(delta):
 		downpress = true
 	if Input.is_action_pressed("ui_up"):
 		if (not crouchpress) and (not wallslide) and (not downpress) and (not ledgehang) and (not sliding) and (not crashing):
-			if (jumping == 0) or ((gametime - jumping) > 0.8):
+			if (jumping == 0) or ((lgametime - jumping) > 0.8):
 				if forward < 1.0:
 					forward += 0.1
 	if Input.is_action_pressed("slide-dive"):
@@ -273,9 +348,8 @@ func _physics_process(delta):
 		jumppresstime = 0
 
 	# JOYSTICK CONTROL
-	#var scene_root = get_tree().root.get_children()[0]
 	if moveopposite > 0:
-		if gametime - moveopposite > 0.3:
+		if lgametime - moveopposite > 0.3:
 			moveopposite = 0
 		else:
 			downpress = true
@@ -288,18 +362,17 @@ func _physics_process(delta):
 	if ((abs(joypadleftstickhorz) > 0.02) or (abs(joypadleftstickvert) > 0.02)):
 		joydir += cambasisproj.x*joypadleftstickhorz
 		joydir += -1*(cambasisproj.y*joypadleftstickvert)
-		joydir.normalized()
+		#joydir.normalized()
 		if (not crouchpress) and (not wallslide) and (not downpress) and (not ledgehang) and (not sliding) and (not crashing):
-			if (jumping == 0) or ((gametime - jumping) > 0.8):
+			if (jumping == 0) or ((lgametime - jumping) > 0.8):
 				forward = joydir.length()
 		var pbz = global_transform.basis.z
 		if (moveopposite == 0) and (pbz.dot(joydir) < -0.6):
-			moveopposite = gametime
-			#print('MOVEOPPOSITE')
+			moveopposite = lgametime
 		if pbz.dot(joydir) == -1:
 			# vectors are 180 degrees apart and linear interpolate gives error
 			pbz += global_transform.basis.x * 0.01
-			pbz.normalized()
+			#pbz.normalized()
 		var lidir = pbz.linear_interpolate(joydir,0.3).normalized()
 		if sliding or longjump:
 			lidir = pbz.linear_interpolate(joydir,0.02).normalized()
@@ -315,6 +388,18 @@ func _physics_process(delta):
 			global_rotate(global_transform.basis.y,rotate*delta*speed*0.2)
 		else:
 			global_rotate(global_transform.basis.y,rotate*delta*speed)
+
+	#if planet.get_class() == 'RigidBody':
+	#if planet.get("movevec"):
+	if "movevec" in planet:
+		var vectocenter = global_transform.origin - planet.global_transform.origin
+		var rotvec = Vector3(0,0,0)
+		if "rotangle" in planet:
+			var rotvectocenter = vectocenter.rotated(planet.rotvec,planet.rotangle)
+			rotvec = rotvectocenter-vectocenter
+			global_rotate(planet.rotvec,planet.rotangle)
+		var _ignore = move_and_collide(planet.movevec+rotvec)
+		
 
 	if wallslide:
 		if not $slidesound.playing:
@@ -344,7 +429,7 @@ func _physics_process(delta):
 				$jumpsound.play()
 				forward = 1
 				jumpforce = 3.5
-				jumping = gametime
+				jumping = lgametime
 				jumpvec = planetnormal 
 				jumpbasis = Basis(global_transform.basis.x,global_transform.basis.y,global_transform.basis.z)
 				return
@@ -364,15 +449,13 @@ func _physics_process(delta):
 				aplayer.play("WallClimbUp")
 			else:
 				ledgehang = false
-				print('LEDGE FALL')
-				jumping = gametime
+				jumping = lgametime
 				jumpvec = planetnormal 
 				jumpvec = jumpvec.normalized()
 				jumpbasis = Basis(global_transform.basis.x,global_transform.basis.y,global_transform.basis.z)
 				runpart.emitting = false
 				if $walksound.playing:
 					$walksound.stop()
-					#print('STOP-WALKSOUND1')
 				wakepart.emitting = false
 				jumpforce = 0
 		elif rotate != 0:
@@ -394,25 +477,16 @@ func _physics_process(delta):
 					aplayer.play('WallClimb.r')
 		else:
 			aplayer.play('WallHang',0.3)
-	elif slam:
+	elif slam != 0:
+		global_transform.basis = align_up(global_transform.basis, planetnormal)
 		if aplayer.get_current_animation_position() > 0.5:
 			var gravityvec = planetnormal * -1 * 12.0
 			if slamground == 0:
 				var kcol = move_and_collide(gravityvec * delta)
 				if kcol:
 					if kcol.collider in lava:
-						print('IN LAVA') #NOTE: should really make the below a function
-						slam = false
-						aplayer.play('FireRun')
-						$quacksound.play()
-						jumpforce = 3.4
-						forward = 1.0
-						fulljump = true
-						jumping = gametime
-						jumpvec = planetnormal 
-						jumpvec = jumpvec.normalized()
-						jumpbasis = Basis(global_transform.basis.x,global_transform.basis.y,global_transform.basis.z)
-						smokepart.emitting = true
+						slam = 0
+						enterlava()
 						return
 					if rad2deg(kcol.normal.angle_to(global_transform.basis.y)) < 40:
 					#if kcol.collider in planets:
@@ -420,7 +494,11 @@ func _physics_process(delta):
 						global_transform.basis = align_up(global_transform.basis, kcol.normal)
 						force_update_transform()
 						orthonormalize()
-						#print('%s-COLLAND' % tics)
+						if "moveonslam" in kcol.collider:
+							kcol.collider.startplatmove(kcol.position)
+				elif (lgametime-slam) > 2.0:
+					# slam in space somewhere
+						slam = 0
 			else:
 				if slamground < 0.03:
 					# NOTE: This is a bit of a hack and assumes delta > 0 and < 0.03
@@ -438,15 +516,14 @@ func _physics_process(delta):
 						$slamsound.play()
 				slamground += delta
 				if slamground > 0.5:
-					slam = false
+					slam = 0
 		else:
 			#if Input.is_action_just_pressed("slide-dive"):
 			if slidepress:
-				#print('SLIDE-DIVE')
 				aplayer.play('BellySlide')
 				$launchsound.play()
-				slam=false
-				jumping = gametime
+				slam=0
+				jumping = lgametime
 				jumpvec = planetnormal 
 				jumpvec = jumpvec.normalized()
 				jumpbasis = Basis(global_transform.basis.x,global_transform.basis.y,global_transform.basis.z)
@@ -457,30 +534,26 @@ func _physics_process(delta):
 	elif jumping > 0:
 		if $walksound.playing:
 			$walksound.stop()
-			#print('STOP-WALKSOUND2')
 		# SLAM
-		if crouchpress and (not longjump) and (not crashing) and (gametime-jumping > 0.5) and (aplayer.current_animation != 'BackFlip') and (aplayer.current_animation != 'BellySlide'):
-			#print('SLAM!!-%s-%s' % [jumping,jumping>0])
-			#print(aplayer.current_animation)
+		if crouchpress and (not longjump) and (not crashing) and (lgametime-jumping > 0.5) and (aplayer.current_animation != 'BackFlip') and (aplayer.current_animation != 'BellySlide'):
 			jumping = 0
 			longjump = false
 			sideflip = false
 			aplayer.play('Slam')
-			slam = true
+			slam = lgametime
 			slamground = 0
 			return
 		# FULL-JUMP
-		if (not fulljump) and (not longjump) and (not crashing) and (gametime-jumping > 0.1) and (aplayer.current_animation != 'BackFlip') and (aplayer.current_animation != 'BellySlide'):
+		if (not fulljump) and (not longjump) and (not crashing) and (lgametime-jumping > 0.1) and (aplayer.current_animation != 'BackFlip') and (aplayer.current_animation != 'BellySlide'):
 			if jumppresstime > 0.1:
 				jumpforce += 1.2
 				fulljump = true
-		#var nearest = getnearest(self,planet,planets,tics)
 		var nearest = getnearest(self,planets)
 		var nearestplanet = nearest[0]
 		#var nearestnorm = nearest[1]
 		var nearestdistance = nearest[2]
-		if nearestplanet != planet:
-			print("%s-Changed Planets from %s to %s" % [tics,planet.name,nearestplanet.name])
+		#if nearestplanet != planet:
+		#	print("%s-Changed Planets Jumping from %s to %s" % [tics,planet.name,nearestplanet.name])
 		planet = nearestplanet
 		planetnormal = nearest[1].normalized()
 
@@ -489,7 +562,7 @@ func _physics_process(delta):
 		if pby.dot(planetnormal) == -1:
 			#vectors are 180 degree difference
 			pby += (global_transform.basis.x * .01)
-			pby.normalized()
+			#pby.normalized()
 		var lidir = pby.linear_interpolate(planetnormal,0.15).normalized()
 		global_transform.basis = align_up(global_transform.basis,lidir)
 
@@ -505,13 +578,14 @@ func _physics_process(delta):
 			jumpforce -= (delta * 4.0)
 			if jumpforce < 0:
 				if abs(jumpforce) > 0.2:
-					print('NEGATIVE JUMPFORCE:%s' % jumpforce)
+					#print('NEGATIVE JUMPFORCE:%s' % jumpforce)
+					pass
 				jumpforce = 0
 
 		#MOVE
 		var gravityvec = planetnormal * -1 * 5.0
 		var jvec = jumpvec * jumpforce * jumpspeed
-		if gametime - jumping > 0.8:
+		if lgametime - jumping > 0.8:
 			jumpbasis = Basis(global_transform.basis.x,global_transform.basis.y,global_transform.basis.z)
 		else:
 			jumpbasis = align_up(jumpbasis,global_transform.basis.y)
@@ -526,25 +600,14 @@ func _physics_process(delta):
 			var colnormangle = rad2deg(kcol.normal.angle_to(global_transform.basis.y))
 			if colnormangle < 40: # ground
 				if kcol.collider in lava:
-					print('IN LAVA')
-					aplayer.play('FireRun')
-					$quacksound.play()
-					jumpforce = 3.4
-					forward = 1.0
-					fulljump = true
-					jumping = gametime
-					jumpvec = planetnormal 
-					jumpvec = jumpvec.normalized()
-					jumpbasis = Basis(global_transform.basis.x,global_transform.basis.y,global_transform.basis.z)
-					runpart.emitting = false
-					if $walksound.playing:
-						$walksound.stop()
-					wakepart.emitting = false
-					smokepart.emitting = true
+					enterlava()
+					return
+				elif "boulder" in kcol.collider.name:
 					return
 				else:
 					smokepart.emitting = false
 				jumping = 0
+				#print("%s-LAND on %s" % [tics,kcol.collider.name])
 				if crouchpress and (longjump or (aplayer.current_animation == 'BellySlide')):
 					sliding = true
 					slidecol.disabled = false
@@ -575,11 +638,10 @@ func _physics_process(delta):
 				if crashing:
 					return
 				elif aplayer.current_animation == 'BellySlide':
-					crashing = true
-					aplayer.play('Crash')
-					$crashsound.play()
-					forward = 0
 					jumpforce = 0
+					crash()
+					return
+				elif "boulder" in kcol.collider.name:
 					return
 				elif nearestdistance > 2.0:  # no wallslide if close to ground
 					# rotate to align with wall, NOTE: below sometimes flips tux upside down
@@ -588,7 +650,7 @@ func _physics_process(delta):
 					force_update_transform()
 					if upbeforealign.dot(global_transform.basis.y) < -0.8:
 						print('Flipped upside down!!!')
-					jumping = 0
+					#print('%s-WALLHANG/WALLSIDE on %s' % [tics,kcol.collider.name])
 					longjump = false
 					sideflip = false
 					var ldgdownfrom = global_transform.origin + global_transform.basis.y*1.0 + global_transform.basis.z*0.5
@@ -598,28 +660,26 @@ func _physics_process(delta):
 					var ldgfwdto = ldgfwdfrom + global_transform.basis.z*0.82
 					var ldgfwdrc = space_state.intersect_ray(ldgfwdfrom,ldgfwdto,[self])
 					var nearledge = false
-					#print('LDGFWDRC:%s' % [ldgfwdrc])
-					#print('LDGDOWNRC:%s' % [ldgdownrc])
 					if not ldgfwdrc and ldgdownrc:
 						nearledge = true
-					#print('LDGFWDRAY:%s' % [ldgfwdray.is_colliding()])
-					#print('LDGDOWNRAY:%s' % [ldgdownray.is_colliding()])
 					#if ldgdownray.is_colliding() and (not ldgfwdray.is_colliding()):
 					#	nearledge = true
 					if nearledge:
-						#print('LEDGE HANG')
-						#print(ldgdownrc.collider.name)
+						jumping = 0
 						ledgehang = true
 						forward = 0
 						# align height with ledge height (ldgdownrc.position)
 						global_transform.origin = ldgdownrc.position + global_transform.basis.z*-0.5 + global_transform.basis.y*-0.5
 						force_update_transform()
 						aplayer.play('WallHang')
-					else:
+					elif kcol.collider.collision_layer == 4:
+						jumping = 0
 						wallslide = true
 						forward = 0.5
 						aplayer.play('WallSlide')
 						return
+					#else:
+					#	print("%s-hitwall-%s-%s" % [tics,kcol.collider.name,kcol.collider.collision_layer])
 	else:   # ON FLOOR/GROUND
 		if jumppress and (not sliding):
 			if crouchpress:
@@ -652,14 +712,13 @@ func _physics_process(delta):
 				jumpforce = 2.2
 				fulljump = false
 			#print('JUMP-%s' % gametime)
-			jumping = gametime
+			jumping = lgametime
 			jumpvec = planetnormal 
 			jumpvec = jumpvec.normalized()
 			jumpbasis = Basis(global_transform.basis.x,global_transform.basis.y,global_transform.basis.z)
 			runpart.emitting = false
 			if $walksound.playing:
 				$walksound.stop()
-				#print('STOP-WALKSOUND3')
 			wakepart.emitting = false
 		else:
 			if forward != 0:
@@ -674,11 +733,9 @@ func _physics_process(delta):
 						if not sliding:
 							if not $walksound.playing:
 								$walksound.play()
-								#print('START-WALKSOUND')
 						else:
 							if $walksound.playing:
 								$walksound.stop()
-								#print('STOP-WALKSOUND4')
 				if sliding:
 					if not $slidesound.playing:
 						$slidesound.play()
@@ -706,23 +763,27 @@ func _physics_process(delta):
 						runpart.emitting = false
 						#if $walksound.playing:
 						#	$walksound.stop()
-						#	print('STOP-WALKSOUND5')
 				elif downpress:
 					aplayer.play('KickStop')
 					wakepart.emitting = false
 					runpart.emitting = false
 					#if $walksound.playing:
 					#	$walksound.stop()
-					#	print('STOP-WALKSOUND6')
 				elif spinpress:
 					aplayer.play('Spin')
 					$spinsound.play()
+					runcol.disabled = true
+					spincol.disabled = false
 				else:
 					if aplayer.current_animation == 'Spin':
 						if aplayer.current_animation_position > 1.0:
 							aplayer.play('Walk',-1,abs(forward*2.5))
+							runcol.disabled = false
+							spincol.disabled = true
 					else:
 						aplayer.play('Walk',-1,abs(forward*2.5))
+						runcol.disabled = false
+						spincol.disabled = true
 
 				# MOVE
 				var gravityvec = planetnormal * -1 * 3.0 * delta
@@ -735,27 +796,29 @@ func _physics_process(delta):
 						global_transform.basis = align_up(global_transform.basis, kcol.normal.normalized())
 						#global_translate(fmovevec)
 						global_translate(kcol.get_remainder())
+					elif kcol.collider in lava:
+						enterlava()
+						return
 					else:
 						if sliding:
 							var kcolnormangle = rad2deg(kcol.normal.angle_to(global_transform.basis.y))
 							if kcolnormangle > 55 and kcolnormangle < 120:
-								print('CRASH:%s' % kcolnormangle)
+								#print('CRASH:%s' % kcolnormangle)
 								sliding = false
-								crashing = true
-								runpart.emitting = false
-								if $walksound.playing:
-									$walksound.stop()
-									#print('STOP-WALKSOUND7')
-								wakepart.emitting = false
-								aplayer.play('Crash')
-								if $slidesound.playing:
-									$slidesound.stop()
-								$crashsound.play()
-								forward = 0
+								crash()
 								return
-						else:
-							pass
-							#print('OBJCOLLIDER:%s' % kcol.collider)
+						elif "boulder" in kcol.collider.name:
+							if not crashing:
+								crash()
+								return
+						elif "bot" in kcol.collider.name:
+							if aplayer.current_animation == 'Spin':
+								addrobotpieces(kcol.collider)
+								kcol.collider.queue_free()
+							elif not crashing:
+								crash()
+								sparkpart.emitting = true
+								return
 				else:
 					nofloorcollide = true
 				force_update_transform()
@@ -775,33 +838,8 @@ func _physics_process(delta):
 				if forward < 0.05 and forward > -0.05:
 					forward = 0
 				# ALIGN TO GROUND
-				var onground = false
-				var rayfrom = global_transform.origin
-				var rayto = global_transform.origin+(global_transform.basis.y.normalized()*-9)
-				var result = space_state.intersect_ray(rayfrom,rayto,[self],1)
-				if result:
-					var groundpos = result.position
-					# NOTE: the below sometimes flips the z vector (makes it point in the opposite direction)
-					var pby = global_transform.basis.y
-					if pby.dot(planetnormal) == -1:
-						#vectors are 180 degree difference
-						pby += (global_transform.basis.x * .01)
-						pby.normalized()
-					var lidir = pby.linear_interpolate(result.normal,0.4).normalized()
-					global_transform.basis = align_up(global_transform.basis,lidir)
-					force_update_transform()
-					orthonormalize()
-					planetnormal = result.normal.normalized()
-					if result.collider != planet:
-						print("%s-Changed Planets RUNNING from %s to %s" % [tics,planet.name,result.collider.name])
-						planet = result.collider
-					# CLAMP TO GROUND
-					if abs(global_transform.origin.distance_to(groundpos)) < 0.6:
-						global_transform.origin = groundpos+(planetnormal*.5)
-						force_update_transform()
-						onground = true
-				else:
-					print('ERROR-NOPLANET')
+				var atg = aligntoground()
+				var onground = atg[0]
 				# CHECK IF MOVED OFF PLATFORM
 				if nofloorcollide and not onground:
 					var onplatform = false
@@ -811,21 +849,43 @@ func _physics_process(delta):
 						if abs(global_transform.origin.distance_to(pcast.position)) < 0.6:
 							onplatform = true
 					if not onplatform:
-						print('NOGROUNDCOLLIDE')
-						jumping = gametime
+						#print('NOGROUNDCOLLIDE')
+						jumping = lgametime
 						jumpvec = planetnormal 
 						jumpvec = jumpvec.normalized()
 						jumpbasis = Basis(global_transform.basis.x,global_transform.basis.y,global_transform.basis.z)
 						runpart.emitting = false
 						if $walksound.playing:
 							$walksound.stop()
-							#print('STOP-WALKSOUND8')
 						wakepart.emitting = false
 						jumpforce = 0
 			else: #STANDING STILL
-				#var gravityvec = planetnormal * -1 * 3.0 * delta
-				#var _kcol = move_and_collide(gravityvec)
-				#aligntoground()
+				var atg = aligntoground()
+				var onground = atg[0]
+				var kcol = false
+				if "gravitywhenstill" in planet:
+					var gravityvec = planetnormal * -1 * 3.0 * delta
+					kcol = move_and_collide(gravityvec)
+				else:
+					kcol = move_and_collide(Vector3(0,0,0))
+				if kcol:
+					if kcol.collider in lava:
+						enterlava()
+						return
+					elif "boulder" in kcol.collider.name:
+						if onground and (not crashing):
+							crash()
+					elif "bot" in kcol.collider.name:
+						if aplayer.current_animation == 'Spin':
+							addrobotpieces(kcol.collider)
+							kcol.collider.queue_free()
+						elif not crashing:
+							crash()
+							sparkpart.emitting = true
+							return
+					elif "screw" in kcol.collider.name:
+						if aplayer.current_animation == "Spin":
+							kcol.collider.turnscrew(kcol.position)
 				if crashing:
 					if aplayer.current_animation == 'Crash':
 						if aplayer.current_animation_position > 0.6:
@@ -835,6 +895,7 @@ func _physics_process(delta):
 							aplayer.play('Landing')
 					elif aplayer.current_animation != 'Landing':
 						crashing = false
+						sparkpart.emitting = false
 						slidecol.disabled = true
 						runcol.disabled = false
 					return
@@ -856,22 +917,32 @@ func _physics_process(delta):
 					else:
 						aplayer.play('Crouch')
 						aplayer.seek(0.3,true)
+				elif spinpress:
+					aplayer.play('Spin')
+					$spinsound.play()
+					runcol.disabled = true
+					spincol.disabled = false
 				else:
-					aplayer.play('Stand')
+					if aplayer.current_animation == 'Spin':
+						if aplayer.current_animation_position > 1.0:
+							aplayer.play('Stand')
+							runcol.disabled = false
+							spincol.disabled = true
+					else:
+						aplayer.play('Stand')
+						runcol.disabled = false
+						spincol.disabled = true
 					if $walksound.playing:
 						$walksound.stop()
-						#print('STOP-WALKSOUND9')
 				runpart.emitting = false
 				if $walksound.playing:
 					$walksound.stop()
-					#print('STOP-WALKSOUND10')
 				wakepart.emitting = false
 				if $watersound.playing:
 					$watersound.stop()
 
 
 func _on_waterarea_body_entered(body):
-	#print('ENTERWATER: %s' % body.name)
 	if body.name == 'tux':
 		inwater = true
 		runpart.emitting = false
@@ -879,7 +950,6 @@ func _on_waterarea_body_entered(body):
 			$walksound.stop()
 	
 func _on_waterarea_body_exited(body):
-	#print('LEAVEWATER: %s' % body.name)
 	if body.name == 'tux':
 		inwater = false
 		#splashpart.emitting = false
@@ -894,6 +964,13 @@ func _on_waterarea_body_exited(body):
 func _on_marblearea_body_entered(body,area):
 	if body.name == 'tux':
 		$collectsound.play()
-		marblecount += 1
-		mclabel.text = str(marblecount)
+		globals.marblecount += 1
+		mclabel.text = str(globals.marblecount)
+		globals.marbles[area.name] = 1
 		area.queue_free()
+		
+func _on_portal_entered(body,portalarea):
+	if body.name == 'tux':
+		var scenename = "res://"+portalarea.name+".tscn"
+		#get_tree().change_scene(scenename)
+		globals.load_new_scene(scenename)

@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/smallplanet.obj-1c98deb0fc151e67f8be8db571d11501.mesh"
+
+[deps]
+
+files=[ "res://.import/smallplanet.obj-1c98deb0fc151e67f8be8db571d11501.mesh" ]
+
+source_file="res://objfiles/smallplanet.obj"
+dest_files=[ "res://.import/smallplanet.obj-1c98deb0fc151e67f8be8db571d11501.mesh", "res://.import/smallplanet.obj-1c98deb0fc151e67f8be8db571d11501.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/godotbot-leftleg.obj-fdb1776385dbd39ea992c21ce34ba094.mesh"
+
+[deps]
+
+files=[ "res://.import/godotbot-leftleg.obj-fdb1776385dbd39ea992c21ce34ba094.mesh" ]
+
+source_file="res://objfiles/godotbot-leftleg.obj"
+dest_files=[ "res://.import/godotbot-leftleg.obj-fdb1776385dbd39ea992c21ce34ba094.mesh", "res://.import/godotbot-leftleg.obj-fdb1776385dbd39ea992c21ce34ba094.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

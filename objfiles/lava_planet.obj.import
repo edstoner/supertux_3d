@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/lava_planet.obj-47545cf1e332dbff2b0d1f1ee27c3f42.mesh"
+
+[deps]
+
+files=[ "res://.import/lava_planet.obj-47545cf1e332dbff2b0d1f1ee27c3f42.mesh" ]
+
+source_file="res://objfiles/lava_planet.obj"
+dest_files=[ "res://.import/lava_planet.obj-47545cf1e332dbff2b0d1f1ee27c3f42.mesh", "res://.import/lava_planet.obj-47545cf1e332dbff2b0d1f1ee27c3f42.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

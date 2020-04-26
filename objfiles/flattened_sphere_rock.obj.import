@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/flattened_sphere_rock.obj-682eafc3d511d9f4821d8d7abd583eb5.mesh"
+
+[deps]
+
+files=[ "res://.import/flattened_sphere_rock.obj-682eafc3d511d9f4821d8d7abd583eb5.mesh" ]
+
+source_file="res://objfiles/flattened_sphere_rock.obj"
+dest_files=[ "res://.import/flattened_sphere_rock.obj-682eafc3d511d9f4821d8d7abd583eb5.mesh", "res://.import/flattened_sphere_rock.obj-682eafc3d511d9f4821d8d7abd583eb5.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

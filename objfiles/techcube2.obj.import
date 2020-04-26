@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/techcube2.obj-7eefe96858d20de3cb08c26132fd3d67.mesh"
+
+[deps]
+
+files=[ "res://.import/techcube2.obj-7eefe96858d20de3cb08c26132fd3d67.mesh" ]
+
+source_file="res://objfiles/techcube2.obj"
+dest_files=[ "res://.import/techcube2.obj-7eefe96858d20de3cb08c26132fd3d67.mesh", "res://.import/techcube2.obj-7eefe96858d20de3cb08c26132fd3d67.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

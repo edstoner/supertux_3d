@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/godotbot-body.obj-2cc9ddf15ab77bd04573f65017b484a9.mesh"
+
+[deps]
+
+files=[ "res://.import/godotbot-body.obj-2cc9ddf15ab77bd04573f65017b484a9.mesh" ]
+
+source_file="res://objfiles/godotbot-body.obj"
+dest_files=[ "res://.import/godotbot-body.obj-2cc9ddf15ab77bd04573f65017b484a9.mesh", "res://.import/godotbot-body.obj-2cc9ddf15ab77bd04573f65017b484a9.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

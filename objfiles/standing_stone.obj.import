@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/standing_stone.obj-b587ee02ecc6268a7b72a53bdd76dd1a.mesh"
+
+[deps]
+
+files=[ "res://.import/standing_stone.obj-b587ee02ecc6268a7b72a53bdd76dd1a.mesh" ]
+
+source_file="res://objfiles/standing_stone.obj"
+dest_files=[ "res://.import/standing_stone.obj-b587ee02ecc6268a7b72a53bdd76dd1a.mesh", "res://.import/standing_stone.obj-b587ee02ecc6268a7b72a53bdd76dd1a.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

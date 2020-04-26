@@ -1,0 +1,16 @@
+[gd_resource type="SpatialMaterial" load_steps=2 format=2]
+
+[ext_resource path="res://textures/water_normal_2.png" type="Texture" id=1]
+
+[resource]
+flags_transparent = true
+albedo_color = Color( 0.647059, 0.52549, 0.109804, 0.631373 )
+emission_enabled = true
+emission = Color( 0.807843, 0.505882, 0.152941, 1 )
+emission_energy = 0.3
+emission_operator = 0
+emission_on_uv2 = false
+normal_enabled = true
+normal_scale = 2.0
+normal_texture = ExtResource( 1 )
+uv1_scale = Vector3( 10, 10, 1 )

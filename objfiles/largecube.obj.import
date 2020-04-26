@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/largecube.obj-18d967c875522fa4350ea4fd5398e77b.mesh"
+
+[deps]
+
+files=[ "res://.import/largecube.obj-18d967c875522fa4350ea4fd5398e77b.mesh" ]
+
+source_file="res://objfiles/largecube.obj"
+dest_files=[ "res://.import/largecube.obj-18d967c875522fa4350ea4fd5398e77b.mesh", "res://.import/largecube.obj-18d967c875522fa4350ea4fd5398e77b.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

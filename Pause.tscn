@@ -1,0 +1,72 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://fonts/gamefont_26.tres" type="DynamicFont" id=1]
+
+[node name="Pause" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Panel" type="Panel" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = 40.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="."]
+margin_left = 20.0
+margin_top = 20.0
+margin_right = 40.0
+margin_bottom = 14.0
+custom_fonts/font = ExtResource( 1 )
+text = "PAUSE MENU"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Resume" type="Button" parent="."]
+pause_mode = 2
+margin_left = 20.0
+margin_top = 200.0
+margin_right = 170.0
+margin_bottom = 240.0
+focus_neighbour_top = NodePath("../Quit")
+focus_neighbour_bottom = NodePath("../Save")
+custom_fonts/font = ExtResource( 1 )
+text = "Resume"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Save" type="Button" parent="."]
+pause_mode = 2
+margin_left = 20.0
+margin_top = 260.0
+margin_right = 170.0
+margin_bottom = 300.0
+focus_neighbour_top = NodePath("../Resume")
+focus_neighbour_bottom = NodePath("../Quit")
+custom_fonts/font = ExtResource( 1 )
+text = "Save"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Quit" type="Button" parent="."]
+pause_mode = 2
+margin_left = 20.0
+margin_top = 320.0
+margin_right = 170.0
+margin_bottom = 360.0
+focus_neighbour_top = NodePath("../Save")
+focus_neighbour_bottom = NodePath("../Resume")
+custom_fonts/font = ExtResource( 1 )
+text = "Quit"
+__meta__ = {
+"_edit_use_anchors_": false
+}

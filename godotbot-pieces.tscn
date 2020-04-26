@@ -1,0 +1,101 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://objfiles/godotbot-head.obj" type="ArrayMesh" id=1]
+[ext_resource path="res://materials/godotbot_mat.tres" type="Material" id=2]
+[ext_resource path="res://objfiles/godotbot-body.obj" type="ArrayMesh" id=3]
+[ext_resource path="res://objfiles/godotbot-leftarm.obj" type="ArrayMesh" id=4]
+[ext_resource path="res://objfiles/godotbot-rightarm.obj" type="ArrayMesh" id=5]
+[ext_resource path="res://objfiles/godotbot-leftleg.obj" type="ArrayMesh" id=6]
+[ext_resource path="res://objfiles/godotbot-rightleg.obj" type="ArrayMesh" id=7]
+
+[sub_resource type="CylinderShape" id=1]
+radius = 0.205098
+height = 0.379824
+
+[sub_resource type="BoxShape" id=2]
+extents = Vector3( 0.15427, 0.220891, 0.102786 )
+
+[sub_resource type="BoxShape" id=3]
+extents = Vector3( 0.037857, 0.320614, 0.065781 )
+
+[sub_resource type="BoxShape" id=4]
+extents = Vector3( 0.0422208, 0.304304, 0.063134 )
+
+[sub_resource type="BoxShape" id=5]
+extents = Vector3( 0.0725328, 0.307968, 0.139327 )
+
+[sub_resource type="BoxShape" id=6]
+extents = Vector3( 0.0705083, 0.294705, 0.1096 )
+
+[node name="godotbot-pieces" type="Spatial"]
+
+[node name="godotbot-head" type="RigidBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.479435, 0 )
+collision_layer = 2
+collision_mask = 3
+
+[node name="MeshInstance" type="MeshInstance" parent="godotbot-head"]
+mesh = ExtResource( 1 )
+material/0 = ExtResource( 2 )
+
+[node name="CollisionShape" type="CollisionShape" parent="godotbot-head"]
+shape = SubResource( 1 )
+
+[node name="godotbot-body" type="RigidBody" parent="."]
+collision_layer = 2
+collision_mask = 3
+
+[node name="MeshInstance" type="MeshInstance" parent="godotbot-body"]
+mesh = ExtResource( 3 )
+material/0 = ExtResource( 2 )
+
+[node name="CollisionShape" type="CollisionShape" parent="godotbot-body"]
+shape = SubResource( 2 )
+
+[node name="godotbot-leftarm" type="RigidBody" parent="."]
+transform = Transform( 0.966841, -0.255378, 0, 0.255378, 0.966841, 0, 0, 0, 1, 0.380508, -0.0872141, 0 )
+collision_layer = 2
+collision_mask = 3
+
+[node name="MeshInstance" type="MeshInstance" parent="godotbot-leftarm"]
+mesh = ExtResource( 4 )
+material/0 = ExtResource( 2 )
+
+[node name="CollisionShape" type="CollisionShape" parent="godotbot-leftarm"]
+shape = SubResource( 3 )
+
+[node name="godotbot-rightarm" type="RigidBody" parent="."]
+transform = Transform( 0.966765, 0.255665, 0, -0.255665, 0.966765, 0, 0, 0, 1, -0.366462, -0.103871, 0 )
+collision_layer = 2
+collision_mask = 3
+
+[node name="MeshInstance" type="MeshInstance" parent="godotbot-rightarm"]
+mesh = ExtResource( 5 )
+material/0 = ExtResource( 2 )
+
+[node name="CollisionShape" type="CollisionShape" parent="godotbot-rightarm"]
+shape = SubResource( 4 )
+
+[node name="godotbot-leftlefg" type="RigidBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.246648, -0.476974, 0 )
+collision_layer = 2
+collision_mask = 3
+
+[node name="MeshInstance" type="MeshInstance" parent="godotbot-leftlefg"]
+mesh = ExtResource( 6 )
+material/0 = ExtResource( 2 )
+
+[node name="CollisionShape" type="CollisionShape" parent="godotbot-leftlefg"]
+shape = SubResource( 5 )
+
+[node name="godotbot-rightleg" type="RigidBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.246047, -0.481844, 0 )
+collision_layer = 2
+collision_mask = 3
+
+[node name="MeshInstance" type="MeshInstance" parent="godotbot-rightleg"]
+mesh = ExtResource( 7 )
+material/0 = ExtResource( 2 )
+
+[node name="CollisionShape" type="CollisionShape" parent="godotbot-rightleg"]
+shape = SubResource( 6 )
