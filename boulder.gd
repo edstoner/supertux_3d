@@ -22,7 +22,7 @@ func _physics_process(delta):
 	rotangle = delta*speed*0.3
 	var vectocenter = global_transform.origin - planet.global_transform.origin
 	var rotvectocenter = vectocenter.rotated(rotvec,rotangle)
-	var rotvec = rotvectocenter-vectocenter
+	rotvec = rotvectocenter-vectocenter
 	global_translate(rotvec)
 	global_rotate(global_transform.basis.y,rotangle*2)
 	#force_update_transform()

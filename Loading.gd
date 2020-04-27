@@ -64,8 +64,8 @@ func _old_ready():
 		return
 	set_process(true)
 
-func update_progress(count):
-	print("%s - Progress Loading" % count)
+func update_progress(progcount):
+	print("%s - Progress Loading" % progcount)
 
 func _old_process(delta):
 	#loadtime += delta
